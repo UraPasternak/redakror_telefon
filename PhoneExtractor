@@ -1,0 +1,44 @@
+import java.io.*;
+import java.util.regex.*;
+import java.util.*;
+
+public class PhoneExtractor {
+    public static void main(String[] args) {
+        // Шлях до вхідного та вихідного файлів
+        String inputFile = "input.txt";
+        String outputFile = "output.txt";
+
+        // Регулярний вираз для пошуку телефонних номерів в різних форматах
+        String phonePattern = "(\\+380\\d{9}|\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}|\\d{3}[\\s-]?\\d{3}[\\s-]?\\d{2}[\\s-]?\\d{2})";
+
+        // Список для збереження знайдених номерів
+        List<String> phoneNumbers = new ArrayList<>();
+
+        // Читання вхідного файлу
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Пошук номерів телефонів у кожному рядку
+                Matcher matcher = Pattern.compile(phonePattern).matcher(line);
+                while (matcher.find()) {
+                    // Форматуємо номер телефону до стандартного виду: 0969253485
+                    String phone = matcher.group().replaceAll("[^0-9]", "");
+                    phoneNumbers.add(phone);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Запис знайдених номерів в вихідний файл
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+            for (String phoneNumber : phoneNumbers) {
+                writer.write(phoneNumber);
+                writer.newLine();
+            }
+            System.out.println("Номери телефонів успішно записано в файл.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
